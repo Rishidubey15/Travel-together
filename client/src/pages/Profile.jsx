@@ -23,13 +23,7 @@ export default function Profile() {
   const { data: session, isPending } = useSession();
   const [copied, setCopied] = useState(false);
 
-  // Track org verification via localStorage (set in VerifyOrganisation flow)
-  const [isOrgVerified, setIsOrgVerified] = useState(false);
-
-  useEffect(() => {
-    const stored = localStorage.getItem("org_verified");
-    setIsOrgVerified(stored === "true");
-  }, []);
+  
 
   if (isPending) {
     return (
@@ -62,6 +56,7 @@ export default function Profile() {
 
   const memberSince = createdAt
     ? (() => {
+        
         const diff = Date.now() - createdAt.getTime();
         const days = Math.floor(diff / 86400000);
         if (days < 1) return "Today";
@@ -74,7 +69,10 @@ export default function Profile() {
       })()
     : "—";
 
-  const handleCopyEmail = () => {
+  const handleCopyEmail = async() => {
+    const res = await fetch("http://localhost:5001/api/me",{credentials: "include"})
+        const result = await res.json()
+        console.log(result)
     navigator.clipboard.writeText(userEmail).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);

@@ -48,11 +48,28 @@ export default function VerifyOrganisation({ external = false }) {
     );
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
     if (!selected) return;
     setIsSubmitting(true);
-    navigate("/verify-organisation/external", { replace: true });
+const res = await fetch('http://localhost:5001/api/org/get-verifier', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json', // MUST have this for Express json() middleware
+  },
+  body: JSON.stringify({
+    orgID: selectedOrg.id
+  }),
+  credentials: "include" // Correct: keeps your 'auth' session cookies
+});
+
+    const result = await res.json();
+    console.log(result, selectedOrg)
+    if (res.ok){
+
+      window.location.href = result.url
+    }
+    
   };
 
   const selectedOrg = ORGANISATIONS.find((o) => o.id === selected);

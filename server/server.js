@@ -2,11 +2,15 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import { toNodeHandler, fromNodeHeaders } from "better-auth/node";
-import { auth } from "./auth.js";
+import { auth, orgAuth } from "./auth.js";
 import authRoutes from "./routes/auth.js";
+import connect from "./utils/db.js";
+
 
 const app = express();
 const PORT = process.env.PORT || 5001;
+
+await connect()
 
 app.use(
   cors({
@@ -18,6 +22,7 @@ app.use(
 
 // Better Auth catch-all – must be before express.json()
 app.all("/api/auth/*", toNodeHandler(auth));
+app.all("/api/org-verify/*", toNodeHandler(orgAuth));
 
 app.use(express.json());
 app.use("/api", authRoutes);
