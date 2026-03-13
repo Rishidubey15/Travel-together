@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate, redirect } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const ORGANISATIONS = [
   {
@@ -15,7 +15,14 @@ export default function VerifyOrganisation({ external = false }) {
   const [selected, setSelected] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Shown on /verify-organisation/external (dummy redirect page)
+  // Shown on /verify-organisation/external (confirmation page)
+  // Mark org as verified in localStorage as soon as this screen is shown
+  useEffect(() => {
+    if (external) {
+      localStorage.setItem("org_verified", "true");
+    }
+  }, [external]);
+
   if (external) {
     return (
       <div className="min-h-[calc(100vh-3.5rem)] bg-gradient-to-br from-slate-50 to-teal-50 dark:from-slate-950 dark:to-slate-900 flex items-center justify-center px-4">
@@ -41,19 +48,11 @@ export default function VerifyOrganisation({ external = false }) {
     );
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (!selected) return;
     setIsSubmitting(true);
-    const res = await fetch('/api/org/get-verifier',{
-      method: POST,
-      body: {
-        orgID: selectedOrg.id
-      }
-    });
-
-    const result = await res.json();
-    throw redirect(result.url)
+    navigate("/verify-organisation/external", { replace: true });
   };
 
   const selectedOrg = ORGANISATIONS.find((o) => o.id === selected);

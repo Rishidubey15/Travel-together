@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { useSession } from "../lib/auth-client";
 
 function Field({ label, value, placeholder }) {
@@ -21,6 +22,14 @@ function Field({ label, value, placeholder }) {
 export default function Profile() {
   const { data: session, isPending } = useSession();
   const [copied, setCopied] = useState(false);
+
+  // Track org verification via localStorage (set in VerifyOrganisation flow)
+  const [isOrgVerified, setIsOrgVerified] = useState(false);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("org_verified");
+    setIsOrgVerified(stored === "true");
+  }, []);
 
   if (isPending) {
     return (
@@ -76,7 +85,6 @@ export default function Profile() {
     <div className="min-h-[calc(100vh-3.5rem)] bg-gradient-to-br from-slate-50 to-teal-50 dark:from-slate-950 dark:to-slate-900">
       {/* Hero banner */}
       <div className="h-32 sm:h-40 bg-gradient-to-r from-teal-500 via-teal-400 to-cyan-400 dark:from-teal-700 dark:via-teal-600 dark:to-cyan-700 relative overflow-hidden">
-        {/* Decorative circles */}
         <div className="absolute -top-8 -right-8 w-40 h-40 rounded-full bg-white/10" />
         <div className="absolute -bottom-12 -left-6 w-48 h-48 rounded-full bg-white/10" />
         <div className="absolute top-4 left-1/3 w-20 h-20 rounded-full bg-white/5" />
@@ -86,7 +94,6 @@ export default function Profile() {
         {/* Avatar + name row */}
         <div className="relative -mt-12 sm:-mt-14 mb-6 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
           <div className="flex items-end gap-4">
-            {/* Large avatar */}
             <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center text-white text-3xl sm:text-4xl font-bold shadow-xl ring-4 ring-white dark:ring-slate-900 select-none flex-shrink-0">
               {initials || "?"}
             </div>
@@ -99,21 +106,10 @@ export default function Profile() {
               </p>
             </div>
           </div>
-
-          {/* Verified badge */}
-          <div className="sm:pb-1">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-teal-100 dark:bg-teal-900/40 text-teal-700 dark:text-teal-300 text-xs font-semibold border border-teal-200 dark:border-teal-700/50">
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
-                <path fillRule="evenodd" d="M8.603 3.799A4.49 4.49 0 0112 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 013.498 1.307 4.491 4.491 0 011.307 3.497A4.49 4.49 0 0121.75 12a4.49 4.49 0 01-1.549 3.397 4.491 4.491 0 01-1.307 3.497 4.491 4.491 0 01-3.497 1.307A4.49 4.49 0 0112 21.75a4.49 4.49 0 01-3.397-1.549 4.49 4.49 0 01-3.498-1.306 4.491 4.491 0 01-1.307-3.498A4.49 4.49 0 012.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 011.307-3.497 4.49 4.49 0 013.497-1.307zm7.007 6.387a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clipRule="evenodd" />
-              </svg>
-              Verified Account
-            </span>
-          </div>
         </div>
 
-        {/* Main card */}
+        {/* Profile Info card */}
         <div className="bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden mb-6">
-          {/* Section header */}
           <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-700/60 flex items-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
               <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
@@ -122,11 +118,9 @@ export default function Profile() {
               Profile Information
             </h2>
           </div>
-
           <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Field label="Full Name" value={userName} placeholder="Not set" />
             <Field label="User ID" value={userId ? `#${userId.slice(0, 8).toUpperCase()}` : ""} placeholder="Not set" />
-            <Field label="Account Status" value="Active" />
             <Field label="Member Since" value={memberSince} />
           </div>
         </div>
@@ -141,7 +135,6 @@ export default function Profile() {
               My Email Address
             </h2>
           </div>
-
           <div className="p-6">
             <div className="flex items-center justify-between gap-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-700/40 border border-slate-200 dark:border-slate-600/50">
               <div className="flex items-center gap-3 min-w-0">
@@ -151,12 +144,8 @@ export default function Profile() {
                   </svg>
                 </div>
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">
-                    {userEmail}
-                  </p>
-                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
-                    Primary email · {memberSince}
-                  </p>
+                  <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">{userEmail}</p>
+                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">Primary email · {memberSince}</p>
                 </div>
               </div>
               <button
@@ -185,38 +174,66 @@ export default function Profile() {
           </div>
         </div>
 
-        {/* Organisation card */}
+        {/* Organisation card — conditional */}
         <div className="bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden mb-10">
           <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-700/60 flex items-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z" />
             </svg>
-            <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-200">
-              Organisation
-            </h2>
+            <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-200">Organisation</h2>
           </div>
 
           <div className="p-6">
-            <div className="flex items-center gap-4 p-4 rounded-xl bg-teal-50 dark:bg-teal-900/20 border border-teal-100 dark:border-teal-800/40">
-              <span className="text-3xl select-none">🎓</span>
-              <div>
-                <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">
-                  University of Petroleum and Energy Studies
-                </p>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                  UPES · Dehradun, Uttarakhand
-                </p>
+            {isOrgVerified ? (
+              /* ── Verified state ── */
+              <div className="flex items-center gap-4 p-4 rounded-xl bg-teal-50 dark:bg-teal-900/20 border border-teal-100 dark:border-teal-800/40">
+                <span className="text-3xl select-none">🎓</span>
+                <div>
+                  <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">
+                    University of Petroleum and Energy Studies
+                  </p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">UPES · Dehradun, Uttarakhand</p>
+                </div>
+                <span className="ml-auto flex-shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-teal-100 dark:bg-teal-900/50 text-teal-700 dark:text-teal-300 text-xs font-semibold border border-teal-200 dark:border-teal-700/50">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+                    <path fillRule="evenodd" d="M8.603 3.799A4.49 4.49 0 0112 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 013.498 1.307 4.491 4.491 0 011.307 3.497A4.49 4.49 0 0121.75 12a4.49 4.49 0 01-1.549 3.397 4.491 4.491 0 01-1.307 3.497 4.491 4.491 0 01-3.497 1.307A4.49 4.49 0 0112 21.75a4.49 4.49 0 01-3.397-1.549 4.49 4.49 0 01-3.498-1.306 4.491 4.491 0 01-1.307-3.498A4.49 4.49 0 012.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 011.307-3.497 4.49 4.49 0 013.497-1.307zm7.007 6.387a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clipRule="evenodd" />
+                  </svg>
+                  Verified
+                </span>
               </div>
-              <span className="ml-auto flex-shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-teal-100 dark:bg-teal-900/50 text-teal-700 dark:text-teal-300 text-xs font-medium border border-teal-200 dark:border-teal-700/50">
-                <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
-                  <path fillRule="evenodd" d="M19.916 4.626a.75.75 0 01.208 1.04l-9 13.5a.75.75 0 01-1.154.114l-6-6a.75.75 0 011.06-1.06l5.353 5.353 8.493-12.739a.75.75 0 011.04-.208z" clipRule="evenodd" />
-                </svg>
-                Verified
-              </span>
-            </div>
+            ) : (
+              /* ── Not verified state ── */
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-5 rounded-xl bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-700/40">
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                  <div className="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center flex-shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                    </svg>
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-amber-800 dark:text-amber-300">
+                      Organisation not verified
+                    </p>
+                    <p className="text-xs text-amber-600 dark:text-amber-400/80 mt-0.5">
+                      Verify your organisation email to access rides and trusted travel companions.
+                    </p>
+                  </div>
+                </div>
+                <Link
+                  to="/verify-organisation"
+                  className="flex-shrink-0 inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-teal-600 dark:bg-teal-500 text-white text-sm font-semibold hover:bg-teal-700 dark:hover:bg-teal-600 transition-colors shadow-sm"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" />
+                  </svg>
+                  Verify Now
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </div>
     </div>
   );
 }
+
