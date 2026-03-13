@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useSession } from "./lib/auth-client";
 import Navbar from "./components/Navbar";
 import Login from "./pages/Login";
@@ -6,6 +6,8 @@ import Signup from "./pages/Signup";
 import Home from "./pages/Home";
 import VerifyOrganisation from "./pages/VerifyOrganisation";
 import OrganisationRides from "./pages/OrganisationRides";
+import CreateRide from "./pages/CreateRide";
+import MyRides from "./pages/MyRides";
 import Profile from "./pages/Profile";
 import ErrorPage from "./pages/ErrorPage";
 
@@ -39,22 +41,54 @@ function PublicOnlyRoute({ children }) {
   return children;
 }
 
+function WithNav({ children }) {
+  return (
+    <>
+      <Navbar />
+      {children}
+    </>
+  );
+}
+
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={<PublicOnlyRoute><Login /></PublicOnlyRoute>} />
+        {/* Public routes */}
+        <Route path="/login"  element={<PublicOnlyRoute><Login /></PublicOnlyRoute>} />
         <Route path="/signup" element={<PublicOnlyRoute><Signup /></PublicOnlyRoute>} />
-        <Route path="/" element={<ProtectedRoute><Navbar /><Home /></ProtectedRoute>} />
-        <Route path="/verify-organisation" element={<ProtectedRoute><Navbar /><VerifyOrganisation /></ProtectedRoute>} />
-        <Route path="/verify-organisation/external" element={<ProtectedRoute><Navbar /><VerifyOrganisation external /></ProtectedRoute>} />
-        <Route path="/organisation-rides" element={<ProtectedRoute><Navbar /><OrganisationRides /></ProtectedRoute>} />
-        <Route path="/profile" element={<ProtectedRoute><Navbar /><Profile /></ProtectedRoute>} />
 
-        {/* Error page — reads ?code, ?type, ?message from URL */}
+        {/* Protected routes */}
+        <Route path="/" element={
+          <ProtectedRoute><WithNav><Home /></WithNav></ProtectedRoute>
+        } />
+        <Route path="/verify-organisation" element={
+          <ProtectedRoute><WithNav><VerifyOrganisation /></WithNav></ProtectedRoute>
+        } />
+        <Route path="/verify-organisation/external" element={
+          <ProtectedRoute><WithNav><VerifyOrganisation external /></WithNav></ProtectedRoute>
+        } />
+
+        {/* Ride routes */}
+        <Route path="/organisation-rides" element={
+          <ProtectedRoute><WithNav><OrganisationRides /></WithNav></ProtectedRoute>
+        } />
+        <Route path="/create-ride" element={
+          <ProtectedRoute><WithNav><CreateRide /></WithNav></ProtectedRoute>
+        } />
+        <Route path="/my-rides" element={
+          <ProtectedRoute><WithNav><MyRides /></WithNav></ProtectedRoute>
+        } />
+
+        {/* Profile */}
+        <Route path="/profile" element={
+          <ProtectedRoute><WithNav><Profile /></WithNav></ProtectedRoute>
+        } />
+
+        {/* Error page */}
         <Route path="/error" element={<ErrorPage />} />
 
-        {/* Unknown routes → redirect to /error with 404 params */}
+        {/* 404 catch-all */}
         <Route
           path="*"
           element={

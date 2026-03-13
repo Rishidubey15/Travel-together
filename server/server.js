@@ -1,34 +1,42 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
-import { toNodeHandler, fromNodeHeaders } from "better-auth/node";
+import { toNodeHandler } from "better-auth/node";
 import { auth, orgAuth } from "./auth.js";
 import authRoutes from "./routes/auth.js";
+import rideRoutes from "./routes/rides.js";
 import connect from "./utils/db.js";
-
 
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-await connect()
+await connect();
 
-app.use(
-  cors({
-    origin: process.env.CLIENT_ORIGIN || "http://localhost:5173",
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-  })
-);
+const corsOptions = {
+  origin: process.env.CLIENT_ORIGIN || "http://localhost:5173",
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
+};
+
+// Explicitly respond to preflight OPTIONS for all routes
+app.options("*", cors(corsOptions));
+app.use(cors(corsOptions));
 
 // Better Auth catch-all – must be before express.json()
 app.all("/api/auth/*", toNodeHandler(auth));
 app.all("/api/org-verify/*", toNodeHandler(orgAuth));
 
 app.use(express.json());
+
+// Auth + org-verification routes
 app.use("/api", authRoutes);
 
+// Ride feature routes
+app.use("/api", rideRoutes);
+
 // Health check
-app.get("/api/health", (req, res) => {
+app.get("/api/health", (_req, res) => {
   res.json({ ok: true });
 });
 
