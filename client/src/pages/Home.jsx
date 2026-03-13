@@ -51,15 +51,6 @@ export default function Home() {
             ))}
           </ul>
         </section>
-
-        <div className="text-center">
-          <Link
-            to="/verify-organisation"
-            className="inline-flex items-center justify-center px-6 py-3.5 rounded-xl bg-teal-600 dark:bg-teal-500 text-white font-semibold hover:bg-teal-700 dark:hover:bg-teal-600 shadow-md hover:shadow-lg transition-all"
-          >
-            Verify Organisation to View Rides
-          </Link>
-        </div>
       </div>
     </div>
   );

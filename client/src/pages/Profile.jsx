@@ -150,9 +150,8 @@ export default function Profile() {
           </div>
           <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Field label="Full Name"    value={userName}   placeholder="Not set" />
-            <Field label="User ID"      value={userId ? `#${userId.slice(0, 8).toUpperCase()}` : ""} placeholder="Not set" />
+            <Field label="User ID"      value={userId ? `${userId}` : ""} placeholder="Not set" />
             <Field label="Member Since" value={memberSince} />
-            <Field label="Email Verified" value={user.emailVerified ? "Yes ✓" : "No"} />
           </div>
         </div>
 
@@ -235,7 +234,7 @@ export default function Profile() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <Field label="Work Email"  value={orgWorkEmail}  placeholder="—" />
                   <Field label="Job Title"   value={orgJobTitle}   placeholder="—" />
-                  <Field label="Category"    value={orgCategory}   placeholder="—" />
+                  <Field label="Assigned Category"    value={orgCategory}   placeholder="—" />
                   <Field label="Domain"      value={orgDomain}     placeholder="—" />
                 </div>
               </div>
