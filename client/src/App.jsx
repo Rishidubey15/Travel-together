@@ -6,6 +6,7 @@ import Signup from "./pages/Signup";
 import Home from "./pages/Home";
 import VerifyOrganisation from "./pages/VerifyOrganisation";
 import OrganisationRides from "./pages/OrganisationRides";
+import Profile from "./pages/Profile";
 
 function ProtectedRoute({ children }) {
   const { data: session, isPending } = useSession();
@@ -90,6 +91,15 @@ export default function App() {
             <ProtectedRoute>
               <Navbar />
               <OrganisationRides />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Navbar />
+              <Profile />
             </ProtectedRoute>
           }
         />

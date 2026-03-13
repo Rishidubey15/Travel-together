@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, redirect } from "react-router-dom";
 
 const ORGANISATIONS = [
   {
@@ -41,11 +41,19 @@ export default function VerifyOrganisation({ external = false }) {
     );
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!selected) return;
     setIsSubmitting(true);
-    navigate("/verify-organisation/external", { replace: true });
+    const res = await fetch('/api/org/get-verifier',{
+      method: POST,
+      body: {
+        orgID: selectedOrg.id
+      }
+    });
+
+    const result = await res.json();
+    throw redirect(result.url)
   };
 
   const selectedOrg = ORGANISATIONS.find((o) => o.id === selected);
