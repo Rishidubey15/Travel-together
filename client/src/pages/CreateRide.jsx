@@ -4,16 +4,6 @@ import { useNavigate, Link } from "react-router-dom";
 const DAYS = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 
 const ROUTES = [
-  {
-    id: "current",
-    label: "Current Route",
-    stops: ["Aman Vihar","Canal Road","Dilaram Chowk","Kalidas Road","Cantt","Kualagarh Route","Bidholi"],
-  },
-  {
-    id: "alternate",
-    label: "Alternate Route",
-    stops: ["Aman Vihar","Canal Road","Dilaram Chowk","Kalidas Road","Cantt","Premnagar","Bidholi"],
-  },
   { id: "custom", label: "Custom Route", stops: [] },
 ];
 

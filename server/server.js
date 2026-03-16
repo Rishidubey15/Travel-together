@@ -19,23 +19,23 @@ const corsOptions = {
   credentials: true,
 };
 
-// Explicitly respond to preflight OPTIONS for all routes
+
 app.options("*", cors(corsOptions));
 app.use(cors(corsOptions));
 
-// Better Auth catch-all – must be before express.json()
+
 app.all("/api/auth/*", toNodeHandler(auth));
 app.all("/api/org-verify/*", toNodeHandler(orgAuth));
 
 app.use(express.json());
 
-// Auth + org-verification routes
+
 app.use("/api", authRoutes);
 
-// Ride feature routes
+
 app.use("/api", rideRoutes);
 
-// Health check
+
 app.get("/api/health", (_req, res) => {
   res.json({ ok: true });
 });

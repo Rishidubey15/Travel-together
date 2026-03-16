@@ -17,8 +17,8 @@ export default function OrganisationRides() {
 
   // Filters
   const [search, setSearch]       = useState("");
-  const [dayFilter, setDayFilter] = useState(""); // "" = all days
-  const [routeFilter, setRouteFilter] = useState(""); // "" | "current" | "alternate" | "custom"
+  const [dayFilter, setDayFilter] = useState(""); 
+  const [routeFilter, setRouteFilter] = useState(""); 
 
   useEffect(() => {
     let cancelled = false;

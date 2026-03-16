@@ -31,11 +31,11 @@ export default function RideCard({ ride, currentUserId, onJoinToggle, onDelete }
   const isFull    = ride.status === "full" || joinCount >= ride.seats;
   const budget    = formatBudget(ride.budgetMin, ride.budgetMax);
 
-  // Day pills — highlight days in the week
+
   const activeDays = ride.days || [];
 
   const handleJoinClick = () => {
-    if (hasJoined) { doJoin(); return; }      // withdraw = no pickup needed
+    if (hasJoined) { doJoin(); return; }      
     setShowJoinBox(true);
   };
 

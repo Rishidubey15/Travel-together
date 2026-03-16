@@ -40,7 +40,7 @@ export default function ErrorPage() {
         {/* Big error code */}
         <div className="mb-4 select-none">
           <span className="text-[7rem] sm:text-[9rem] font-black leading-none bg-gradient-to-br from-teal-400 to-cyan-500 dark:from-teal-500 dark:to-cyan-400 bg-clip-text text-transparent">
-            {errorCode}
+            #{errorCode}
           </span>
         </div>
 
@@ -51,17 +51,11 @@ export default function ErrorPage() {
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
             </svg>
           </div>
-        </div>
-
-        {/* Title */}
-        <h1 className="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-slate-100 mb-3">
+        <h1 className="h-16 text-2xl sm:text-3xl font-bold text-slate-800 dark:text-slate-100 mb-3 flex items-center justify-center mx-2">
           {errorTitle}
         </h1>
+        </div>
 
-        {/* Message */}
-        <p className="text-slate-500 dark:text-slate-400 text-base mb-6 max-w-sm mx-auto leading-relaxed">
-          {errorMessage}
-        </p>
 
         {/* Query params detail card */}
         <div className="mb-6 mx-auto max-w-sm rounded-xl bg-slate-100 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 p-4 text-left space-y-2">
@@ -69,25 +63,20 @@ export default function ErrorPage() {
             Error Details
           </p>
           <div className="flex items-center justify-between text-sm">
-            <span className="text-slate-500 dark:text-slate-400 font-mono">?code</span>
+            <span className="text-slate-500 dark:text-slate-400 font-mono">code</span>
             <span className="font-semibold text-slate-800 dark:text-slate-100 font-mono">{errorCode}</span>
           </div>
           <div className="w-full h-px bg-slate-200 dark:bg-slate-700" />
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-slate-500 dark:text-slate-400 font-mono">?type</span>
-            <span className="font-semibold text-slate-800 dark:text-slate-100">{errorTitle}</span>
-          </div>
-          <div className="w-full h-px bg-slate-200 dark:bg-slate-700" />
           <div className="flex items-start justify-between text-sm gap-4">
-            <span className="text-slate-500 dark:text-slate-400 font-mono flex-shrink-0">?message</span>
-            <span className="font-medium text-slate-700 dark:text-slate-300 text-right">{errorMessage}</span>
+            <span className="text-slate-500 dark:text-slate-400 font-mono flex-shrink-0">message</span>
+            <span className="font-medium text-slate-700 dark:text-slate-300 text-right max-w-52">{errorMessage}</span>
           </div>
         </div>
 
         
 
         {/* Action buttons */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+        <div className="m-5 flex flex-col sm:flex-row items-center justify-center gap-3">
           <Link
             to="/"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-teal-600 dark:bg-teal-500 text-white font-semibold hover:bg-teal-700 dark:hover:bg-teal-600 transition-colors shadow-md hover:shadow-lg"

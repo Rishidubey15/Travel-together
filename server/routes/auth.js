@@ -22,34 +22,32 @@ router.get("/session", async (req, res) => {
   res.json(session);
 });
 
-router.get("/me", async(req,res)=>{
+router.get("/me", async (req, res) => {
   const session = await auth.api.getSession({
     headers: fromNodeHeaders(req.headers),
   });
-  if(!session){
+  if (!session) {
     return res.status(401).json({
-      message: "User Not Authorised"
-    })
+      message: "User Not Authorised",
+    });
   }
-  const orgDets = await UserOrg.findOne({userId: session.user.id})
+  const orgDets = await UserOrg.findOne({ userId: session.user.id });
 
-  if (orgDets){
-    return res.json({user: session.user, orgDetails: orgDets})
+  if (orgDets) {
+    return res.json({ user: session.user, orgDetails: orgDets });
+  } else {
+    return res.json({ user: session.user });
   }
-  else{
-    return res.json({user: session.user})
-  }
-  
-})
+});
 
 router.post("/org/get-verifier", async (req, res) => {
   const session = await auth.api.getSession({
     headers: fromNodeHeaders(req.headers),
   });
-  if(!session){
+  if (!session) {
     return res.status(401).json({
-      message: "User Not Authorised"
-    })
+      message: "User Not Authorised",
+    });
   }
   const { orgID } = req.body;
   if (!Organizations[orgID]) {
@@ -63,12 +61,13 @@ router.post("/org/get-verifier", async (req, res) => {
       body: {
         provider: "microsoft",
         callbackURL: "http://localhost:5173/",
-        errorCallbackURL: "http://localhost:5173/profile",
-        additionalData: {addedUserId: session.user.id, orgID: orgID}
+        errorCallbackURL:
+          "http://localhost:5173/error?code=500&type=Org+Verification+Error&message=An+Error+Occured+While+Verifying+with+the+Organization",
+        additionalData: { addedUserId: session.user.id, orgID: orgID },
       },
       asResponse: true,
     });
-    
+
     const result = await resp.json();
     res.setHeaders(resp.headers);
     ghredirect = result.url;

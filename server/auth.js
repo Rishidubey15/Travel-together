@@ -12,7 +12,7 @@ const db = client.db(process.env.DATABASE_NAME || "travel_together");
 
 export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL || "http://localhost:5001",
-  // Omit client to disable transactions (required for standalone MongoDB; transactions need a replica set)
+  
   database: mongodbAdapter(db),
   emailAndPassword: {
     enabled: true,
@@ -46,36 +46,36 @@ export const orgAuth = betterAuth({
   trustedOrigins: ["http://localhost:5173", "http://127.0.0.1:5173"],
   hooks: {
     after: createAuthMiddleware(async (ctx) => {
-      // 1. Check if the path STARTS WITH /callback/ (e.g., /callback/microsoft)
+ 
       if (!ctx.path.startsWith("/callback/")) return;
 
       try {
         const additionalData = await getOAuthState(ctx);
-        
-        // Ensure state exists before proceeding
+
+       
         if (!additionalData || !additionalData.addedUserId) {
-          console.error("OAuth state or addedUserId is missing.");
           return;
         }
 
-        // 2. Safely extract the user. Fallback to ctx.context.user if newSession isn't available
         const user = ctx.context?.newSession?.user || ctx.context?.user;
-        console.log(additionalData.addedUserId)
-        const calledUser = await User.findOne({_id: additionalData.addedUserId})
-        console.log(calledUser)
+        const calledUser = await User.findOne({
+          _id: additionalData.addedUserId,
+        });
         if (!user) {
-          console.error("User object missing in context! Here is the context:", ctx.context);
+          console.error(
+            "User object missing in context! Here is the context:",
+            ctx.context,
+          );
           return;
         }
 
-
-        if (!normalizeAndCompare(user.name, calledUser.name)){
-          console.error("Name Mismatch!!")
-          return ctx.redirect("http://localhost:5173/profile")
-          
+        if (!normalizeAndCompare(user.name, calledUser.name)) {
+          console.error("Name Mismatch!!");
+          return ctx.redirect(
+            "http://localhost:5173/error?code=409&type=Name+Mismatch&message=The+name+of+user+does+not+match+with+employee+name"
+          );
         }
 
-        // 3. Create the document wrapped in a try/catch to catch DB validation errors
         const newOrg = await UserOrg.create({
           userId: additionalData.addedUserId,
           workEmail: user.email,
@@ -84,14 +84,10 @@ export const orgAuth = betterAuth({
           allotedCompanyId: additionalData.orgID,
           name: user.name,
           assignedCategory: "Student",
-          derivedCompanyName: user.companyName
+          derivedCompanyName: user.companyName,
         });
-
-        console.log("Successfully created UserOrg:", newOrg);
-
-      } catch (error) {
-        console.error("Failed to create UserOrg in after hook:", error);
-      }
+        console.log("User Mapping Done");
+      } catch (error) {}
     }),
   },
   user: {
