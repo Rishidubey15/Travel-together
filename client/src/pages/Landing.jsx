@@ -1,6 +1,24 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useSession } from "../lib/auth-client";
 import { useEffect } from "react";
+import { useTheme } from "../contexts/ThemeContext";
+
+function SunIcon({ className }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden>
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+    </svg>
+  );
+}
+
+function MoonIcon({ className }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden>
+      <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+    </svg>
+  );
+}
 
 const features = [
   {
@@ -23,6 +41,7 @@ const features = [
 export default function Landing() {
   const { data: session, isPending } = useSession();
   const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     if (!isPending && session) {
@@ -32,8 +51,8 @@ export default function Landing() {
 
   if (isPending) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-teal-600" />
+      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-900">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-teal-600 dark:border-teal-400" />
       </div>
     );
   }
@@ -43,18 +62,29 @@ export default function Landing() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white dark:bg-gray-900">
       {/* Navbar */}
-      <nav className="bg-white border-b border-gray-200 shadow-sm">
+      <nav className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-sm">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="text-xl font-bold text-gray-800">
+            <div className="text-xl font-bold text-gray-800 dark:text-white">
               Travel Together
             </div>
             <div className="flex items-center gap-4">
+              {/* Theme toggle */}
+              <button
+                type="button"
+                onClick={toggleTheme}
+                className="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:text-teal-600 dark:hover:text-teal-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+                aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+              >
+                {theme === "dark" ? <SunIcon className="w-5 h-5" /> : <MoonIcon className="w-5 h-5" />}
+              </button>
+
               <Link
                 to="/login"
-                className="text-gray-600 hover:text-teal-600 font-medium transition-colors"
+                className="text-gray-600 dark:text-gray-300 hover:text-teal-600 dark:hover:text-teal-400 font-medium transition-colors"
               >
                 Login
               </Link>
@@ -70,15 +100,15 @@ export default function Landing() {
       </nav>
 
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-r from-blue-50 to-teal-50">
+      <div className="relative bg-gradient-to-r from-blue-50 to-teal-50 dark:from-gray-800 dark:to-gray-700">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
+              <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-6">
                 Find Your Perfect
-                <span className="text-teal-600"> Travel Companion</span>
+                <span className="text-teal-600 dark:text-teal-400"> Travel Companion</span>
               </h1>
-              <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+              <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
                 Connect with trusted colleagues from your organization for safe, enjoyable travel experiences. Share rides, discover new destinations, and build lasting friendships along the way.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
@@ -90,7 +120,7 @@ export default function Landing() {
                 </Link>
                 <Link
                   to="/login"
-                  className="border border-teal-600 text-teal-600 hover:bg-teal-50 px-8 py-3 rounded-lg font-semibold text-center transition-colors"
+                  className="border border-teal-600 dark:border-teal-400 text-teal-600 dark:text-teal-400 hover:bg-teal-50 dark:hover:bg-teal-900/20 px-8 py-3 rounded-lg font-semibold text-center transition-colors"
                 >
                   Sign In
                 </Link>
@@ -110,13 +140,13 @@ export default function Landing() {
       </div>
 
       {/* Features Section */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20 bg-gray-50 dark:bg-gray-800">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
               Why Choose Travel Together?
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
               Travel Together is more than just a ride-sharing platform. It's a community of professionals who share a passion for exploration and adventure, all within the trusted network of your organization.
             </p>
           </div>
@@ -124,13 +154,13 @@ export default function Landing() {
             {features.map((feature) => (
               <div
                 key={feature.title}
-                className="bg-white rounded-xl p-8 shadow-sm hover:shadow-lg transition-shadow border border-gray-100"
+                className="bg-white dark:bg-gray-700 rounded-xl p-8 shadow-sm hover:shadow-lg transition-shadow border border-gray-100 dark:border-gray-600"
               >
                 <span className="text-4xl mb-4 block">{feature.icon}</span>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
                   {feature.title}
                 </h3>
-                <p className="text-gray-600 leading-relaxed">
+                <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
                   {feature.description}
                 </p>
               </div>
@@ -174,7 +204,7 @@ export default function Landing() {
                 </a>
                 <a href="#" className="text-gray-400 hover:text-white transition-colors">
                   <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.521 8.521 0 0 1-5.33 1.84c-.34 0-.68-.02-1.02-.06C3.44 20.29 5.7 21 8.12 21 16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56.84-.6 1.56-1.36 2.14-2.23z"/>
+                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                   </svg>
                 </a>
                 <a href="#" className="text-gray-400 hover:text-white transition-colors">
