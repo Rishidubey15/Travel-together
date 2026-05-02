@@ -54,7 +54,7 @@ export default function Navbar() {
         <div className="flex justify-between items-center h-14">
 
           {/* Logo */}
-          <Link to="/" className="text-lg font-semibold text-slate-800 dark:text-slate-100 hover:text-teal-600 dark:hover:text-teal-400 transition-colors">
+          <Link to="/dashboard" className="text-lg font-semibold text-slate-800 dark:text-slate-100 hover:text-teal-600 dark:hover:text-teal-400 transition-colors">
             Travel Together
           </Link>
 
@@ -73,8 +73,8 @@ export default function Navbar() {
             </button>
 
             {/* Nav links */}
-            <Link to="/" className="px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-teal-600 dark:hover:text-teal-400 text-sm font-medium transition-colors">
-              Home
+            <Link to="/dashboard" className="px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-teal-600 dark:hover:text-teal-400 text-sm font-medium transition-colors">
+              Dashboard
             </Link>
             <Link to="/organisation-rides" className="px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-teal-600 dark:hover:text-teal-400 text-sm font-medium transition-colors">
               Rides

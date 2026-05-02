@@ -3,7 +3,8 @@ import { useSession } from "./lib/auth-client";
 import Navbar from "./components/Navbar";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import Home from "./pages/Home";
+import Landing from "./pages/Landing";
+import Dashboard from "./pages/Dashboard";
 import VerifyOrganisation from "./pages/VerifyOrganisation";
 import OrganisationRides from "./pages/OrganisationRides";
 import CreateRide from "./pages/CreateRide";
@@ -36,7 +37,7 @@ function PublicOnlyRoute({ children }) {
     );
   }
   if (session) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/dashboard" replace />;
   }
   return children;
 }
@@ -55,12 +56,13 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         {/* Public routes */}
+        <Route path="/" element={<Landing />} />
         <Route path="/login"  element={<PublicOnlyRoute><Login /></PublicOnlyRoute>} />
         <Route path="/signup" element={<PublicOnlyRoute><Signup /></PublicOnlyRoute>} />
 
         {/* Protected routes */}
-        <Route path="/" element={
-          <ProtectedRoute><WithNav><Home /></WithNav></ProtectedRoute>
+        <Route path="/dashboard" element={
+          <ProtectedRoute><WithNav><Dashboard /></WithNav></ProtectedRoute>
         } />
         <Route path="/verify-organisation" element={
           <ProtectedRoute><WithNav><VerifyOrganisation /></WithNav></ProtectedRoute>
