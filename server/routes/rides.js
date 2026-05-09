@@ -13,6 +13,7 @@ import { fromNodeHeaders } from "better-auth/node";
 import { auth } from "../auth.js";
 import { UserOrg } from "../models/OpModel.js";
 import { Ride } from "../models/RideModel.js";
+import { Notification } from "../models/NotificationModel.js";
 
 const router = Router();
 
@@ -135,6 +136,18 @@ router.put("/rides/:id/join", async (req, res) => {
       requestedAt: new Date(),
     });
     await ride.save();
+
+    // Create notification for ride poster
+    await Notification.create({
+      recipientId: ride.postedBy.userId,
+      rideId: ride._id,
+      type: "join_request",
+      requesterName: orgDetails.name,
+      requesterEmail: orgDetails.workEmail,
+      routeLabel: ride.routeLabel,
+      pickupPoint: pickupPoint?.trim() || undefined,
+    });
+
     return res.json({ ride, joined: true });
   } catch (err) {
     console.error("PUT /api/rides/:id/join error:", err);

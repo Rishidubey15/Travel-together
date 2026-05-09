@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useSession } from "./lib/auth-client";
+import { NotificationProvider } from "./contexts/NotificationContext";
 import Navbar from "./components/Navbar";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -54,7 +55,8 @@ function WithNav({ children }) {
 export default function App() {
   return (
     <BrowserRouter>
-      <Routes>
+      <NotificationProvider>
+        <Routes>
         {/* Public routes */}
         <Route path="/" element={<Landing />} />
         <Route path="/login"  element={<PublicOnlyRoute><Login /></PublicOnlyRoute>} />
@@ -101,6 +103,7 @@ export default function App() {
           }
         />
       </Routes>
+      </NotificationProvider>
     </BrowserRouter>
   );
 }

@@ -5,6 +5,7 @@ import { toNodeHandler } from "better-auth/node";
 import { auth, orgAuth } from "./auth.js";
 import authRoutes from "./routes/auth.js";
 import rideRoutes from "./routes/rides.js";
+import notificationRoutes from "./routes/notifications.js";
 import connect from "./utils/db.js";
 
 const app = express();
@@ -34,6 +35,9 @@ app.use("/api", authRoutes);
 
 
 app.use("/api", rideRoutes);
+
+
+app.use("/api", notificationRoutes);
 
 
 app.get("/api/health", (_req, res) => {

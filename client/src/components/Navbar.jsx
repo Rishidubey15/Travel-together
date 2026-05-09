@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { authClient, useSession } from "../lib/auth-client";
 import { useTheme } from "../contexts/ThemeContext";
+import NotificationBell from "./NotificationBell";
 
 function SunIcon({ className }) {
   return (
@@ -60,6 +61,9 @@ export default function Navbar() {
 
           {/* Right section */}
           <div className="flex items-center gap-1 sm:gap-2">
+
+            {/* Notifications */}
+            <NotificationBell />
 
             {/* Theme toggle */}
             <button
