@@ -15,9 +15,9 @@ export default function Signup() {
     setError("");
     setLoading(true);
     const { error: err } = await authClient.signUp.email(
-      { name, email, password, callbackURL: "/" },
+      { name, email, password, callbackURL: "/dashboard" },
       {
-        onSuccess: () => navigate("/", { replace: true }),
+        onSuccess: () => navigate("/dashboard", { replace: true }),
         onError: (ctx) => setError(ctx.error?.message || "Sign up failed"),
       }
     );

@@ -7,7 +7,7 @@ export default defineConfig({
     port: 5173,
     proxy: {
       "/api": {
-        target: "http://localhost:5001",
+        target: "https://travel-together-backend-hf6m.onrender.com",
         changeOrigin: true,
       },
     },

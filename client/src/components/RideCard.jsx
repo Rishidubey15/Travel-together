@@ -44,7 +44,7 @@ export default function RideCard({ ride, currentUserId, onJoinToggle, onDelete }
     setErrorMsg("");
     setShowJoinBox(false);
     try {
-      const res = await fetch(`http://localhost:5001/api/rides/${ride._id}/join`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/rides/${ride._id}/join`||`http://localhost:5001/api/rides/${ride._id}/join`, {
         method: "PUT",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -61,7 +61,7 @@ export default function RideCard({ ride, currentUserId, onJoinToggle, onDelete }
     if (!confirmDelete) { setConfirmDelete(true); setTimeout(() => setConfirmDelete(false), 3000); return; }
     setDeleteLoading(true);
     try {
-      const res = await fetch(`http://localhost:5001/api/rides/${ride._id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/rides/${ride._id}`||`http://localhost:5001/api/rides/${ride._id}`, {
         method: "DELETE", credentials: "include",
       });
       if (res.ok) { onDelete?.(ride._id); }

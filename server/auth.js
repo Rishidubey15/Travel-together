@@ -13,7 +13,7 @@ const db = client.db(process.env.DATABASE_NAME || "travel_together");
 
 export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL || "http://localhost:5001",
-  
+
   database: mongodbAdapter(db),
   emailAndPassword: {
     enabled: true,
@@ -21,6 +21,12 @@ export const auth = betterAuth({
   },
   advanced: {
     cookiePrefix: "traveltogether",
+  },
+  session: {
+    cookieAttributes: {
+      sameSite: "none",
+      secure: true,
+    },
   },
   user: {
     additionalFields: {
@@ -35,7 +41,11 @@ export const auth = betterAuth({
       },
     },
   },
-  trustedOrigins: ["http://localhost:5173", "http://127.0.0.1:5173"],
+  trustedOrigins: [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    process.env.CLIENT_ORIGIN || "",
+  ].filter(Boolean),
 });
 
 export const orgAuth = betterAuth({
@@ -44,7 +54,17 @@ export const orgAuth = betterAuth({
   advanced: {
     cookiePrefix: "TT-org-ver",
   },
-  trustedOrigins: ["http://localhost:5173", "http://127.0.0.1:5173"],
+  session: {
+    cookieAttributes: {
+      sameSite: "none",
+      secure: true,
+    },
+  },
+  trustedOrigins: [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    process.env.CLIENT_ORIGIN || "",
+  ].filter(Boolean),
   hooks: {
     after: createAuthMiddleware(async (ctx) => {
  
@@ -72,8 +92,9 @@ export const orgAuth = betterAuth({
 
         if (!normalizeAndCompare(user.name, calledUser.name)) {
           console.error("Name Mismatch!!");
+          const clientOrigin = process.env.CLIENT_ORIGIN || "http://localhost:5173";
           return ctx.redirect(
-            "http://localhost:5173/error?code=409&type=Name+Mismatch&message=The+name+of+user+does+not+match+with+employee+name"
+            `${clientOrigin}/error?code=409&type=Name+Mismatch&message=The+name+of+user+does+not+match+with+employee+name`
           );
         }
 
