@@ -4,6 +4,7 @@ import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { createAuthMiddleware, getOAuthState } from "better-auth/api";
 import { User, UserOrg } from "./models/OpModel.js";
 import { normalizeAndCompare } from "./utils/extra.js";
+import { assignedCategoryFromJobTitle } from "./utils/categoryFromJobTitle.js";
 
 const client = new MongoClient(
   process.env.MONGODB_URI || "mongodb://localhost:27017",
@@ -83,7 +84,7 @@ export const orgAuth = betterAuth({
           companyDomain: user.companyDomain,
           allotedCompanyId: additionalData.orgID,
           name: user.name,
-          assignedCategory: "Student",
+          assignedCategory: assignedCategoryFromJobTitle(user.jobTitle),
           derivedCompanyName: user.companyName,
         });
         console.log("User Mapping Done");

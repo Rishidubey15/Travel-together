@@ -14,6 +14,7 @@ import { auth } from "../auth.js";
 import { UserOrg } from "../models/OpModel.js";
 import { Ride } from "../models/RideModel.js";
 import { Notification } from "../models/NotificationModel.js";
+import { normalizeCategoryToAudience } from "../utils/categoryFromJobTitle.js";
 
 const router = Router();
 
@@ -43,8 +44,14 @@ router.get("/rides", async (req, res) => {
   const ctx = await requireOrgUser(req, res);
   if (!ctx) return;
   try {
-    const rides = await Ride.find({ orgId: ctx.orgDetails.allotedCompanyId }).sort({ createdAt: -1 });
-    res.json({ rides, orgId: ctx.orgDetails.allotedCompanyId });
+    const orgId = ctx.orgDetails.allotedCompanyId;
+    const userBucket = normalizeCategoryToAudience(ctx.orgDetails.assignedCategory);
+
+    const audienceClause = [{ audience: { $exists: false } }, { audience: "all" }];
+    if (userBucket) audienceClause.push({ audience: userBucket });
+
+    const rides = await Ride.find({ orgId, $or: audienceClause }).sort({ createdAt: -1 });
+    res.json({ rides, orgId });
   } catch (err) {
     console.error("GET /api/rides error:", err);
     res.status(500).json({ message: "Failed to fetch rides" });
@@ -68,7 +75,20 @@ router.post("/rides", async (req, res) => {
   if (!ctx) return;
   const { session, orgDetails } = ctx;
   const { routeType, customRouteLabel, days, departureTime, returnTime,
-          pickupPoint, dropPoint, seats, budgetMin, budgetMax, vehicleType, description } = req.body;
+          pickupPoint, dropPoint, seats, budgetMin, budgetMax, vehicleType, description,
+          audience: audienceRaw, postRideIn } = req.body;
+
+  const audienceIn = typeof audienceRaw === "string" ? audienceRaw : typeof postRideIn === "string" ? postRideIn : "";
+  const audience = audienceIn.trim().toLowerCase();
+  if (!["all", "student", "professor"].includes(audience))
+    return res.status(400).json({ message: "Invalid audience" });
+
+  const posterBucket = normalizeCategoryToAudience(orgDetails.assignedCategory);
+  if (audience !== "all") {
+    if (!posterBucket || audience !== posterBucket) {
+      return res.status(400).json({ message: "You can only post to your category or All" });
+    }
+  }
 
   if (!["current","alternate","custom"].includes(routeType))
     return res.status(400).json({ message: "Invalid routeType" });
@@ -101,6 +121,7 @@ router.post("/rides", async (req, res) => {
       description: description?.trim() || undefined,
       postedBy: { userId: session.user.id, name: orgDetails.name, workEmail: orgDetails.workEmail },
       orgId: orgDetails.allotedCompanyId,
+      audience,
     });
     res.status(201).json({ ride });
   } catch (err) {
