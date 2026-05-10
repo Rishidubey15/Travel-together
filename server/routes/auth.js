@@ -60,9 +60,9 @@ router.post("/org/get-verifier", async (req, res) => {
     const resp = await orgAuth.api.signInSocial({
       body: {
         provider: "microsoft",
-        callbackURL: "http://localhost:5173/",
+        callbackURL: `${process.env.CLIENT_ORIGIN || "http://localhost:5173"}`,
         errorCallbackURL:
-          "http://localhost:5173/error?code=500&type=Org+Verification+Error&message=An+Error+Occured+While+Verifying+with+the+Organization",
+          `${process.env.CLIENT_ORIGIN || "http://localhost:5173"}/error?code=500&type=Org+Verification+Error&message=An+Error+Occured+While+Verifying+with+the+Organization`,
         additionalData: { addedUserId: session.user.id, orgID: orgID },
       },
       asResponse: true,
