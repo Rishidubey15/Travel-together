@@ -14,9 +14,9 @@ export default function Login() {
     setError("");
     setLoading(true);
     const { error: err } = await authClient.signIn.email(
-      { email, password, callbackURL: "/dashboard" },
+      { email, password, callbackURL: "/" },
       {
-        onSuccess: () => navigate("/dashboard", { replace: true }),
+        onSuccess: () => navigate("/", { replace: true }),
         onError: (ctx) => setError(ctx.error?.message || "Sign in failed"),
       }
     );
