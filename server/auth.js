@@ -21,6 +21,11 @@ export const auth = betterAuth({
   },
   advanced: {
     cookiePrefix: "traveltogether",
+    defaultCookieAttributes: {  // ✅ applies to ALL cookies
+    sameSite: "none",
+    secure: true,
+    httpOnly: true,
+  },
   },
   session: {
     cookieAttributes: {
@@ -49,10 +54,16 @@ export const auth = betterAuth({
 });
 
 export const orgAuth = betterAuth({
+  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:5001",
   basePath: "/api/org-verify",
   secret: process.env.BETTER_AUTH_SECRET,
   advanced: {
     cookiePrefix: "TT-org-ver",
+    defaultCookieAttributes: {  // ✅ applies to ALL cookies
+    sameSite: "none",
+    secure: true,
+    httpOnly: true,
+  },
   },
   session: {
     cookieAttributes: {
