@@ -16,7 +16,7 @@ export default function Login() {
     const { error: err } = await authClient.signIn.email(
       { email, password, callbackURL: "/" },
       {
-        onSuccess: () => navigate("/", { replace: true }),
+        onSuccess: () => navigate("/"),
         onError: (ctx) => setError(ctx.error?.message || "Sign in failed"),
       }
     );
