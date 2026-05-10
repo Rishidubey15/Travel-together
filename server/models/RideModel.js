@@ -61,13 +61,6 @@ const rideSchema = new Schema(
 
     orgId:  { type: String, required: true, index: true },
 
-    /** Who can see this ride: whole org, or only matching category (student/professor). */
-    audience: {
-      type: String,
-      enum: ["all", "student", "professor"],
-      default: "all",
-    },
-
     joinRequests: { type: [joinRequestSchema], default: [] },
 
     status: {
