@@ -1,5 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
+
+function profileCategoryBucket(assignedCategory) {
+  if (assignedCategory == null || String(assignedCategory).trim() === "") return null;
+  const s = String(assignedCategory).trim().toLowerCase();
+  if (s === "student") return "student";
+  if (s === "professor") return "professor";
+  return null;
+}
 
 const DAYS = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 
@@ -59,6 +67,32 @@ export default function CreateRide() {
   const [loading, setLoading]               = useState(false);
   const [error, setError]                   = useState("");
 
+  const [profileLoading, setProfileLoading] = useState(true);
+  const [orgAssignedCategory, setOrgAssignedCategory] = useState("");
+  const [audience, setAudience]             = useState("all");
+
+  const categoryBucket = profileCategoryBucket(orgAssignedCategory);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("http://localhost:5001/api/me", { credentials: "include" })
+      .then(async (res) => {
+        const data = await res.json();
+        if (cancelled) return;
+        if (!res.ok) return;
+        const cat = data.orgDetails?.assignedCategory ?? "";
+        setOrgAssignedCategory(cat);
+        const bucket = profileCategoryBucket(cat);
+        setAudience((prev) => {
+          if (prev !== "all" && bucket && prev !== bucket) return "all";
+          return prev;
+        });
+      })
+      .catch(() => {})
+      .finally(() => { if (!cancelled) setProfileLoading(false); });
+    return () => { cancelled = true; };
+  }, []);
+
   const toggleDay = (day) =>
     setDays((prev) =>
       prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
@@ -70,6 +104,9 @@ export default function CreateRide() {
     if (days.length === 0) { setError("Please select at least one day."); return; }
     if (routeType === "custom" && !customRouteLabel.trim()) {
       setError("Please describe your custom route."); return;
+    }
+    if (audience !== "all" && (!categoryBucket || audience !== categoryBucket)) {
+      setError("Choose a valid audience (All or your category)."); return;
     }
 
     setLoading(true);
@@ -91,6 +128,7 @@ export default function CreateRide() {
           budgetMax: budgetMax || undefined,
           vehicleType: vehicleType || undefined,
           description: description.trim() || undefined,
+          audience,
         }),
       });
       const data = await res.json();
@@ -132,6 +170,13 @@ export default function CreateRide() {
 
           <form onSubmit={handleSubmit} className="space-y-8">
 
+            {profileLoading && (
+              <div className="flex items-center justify-center gap-2 py-2 text-sm text-slate-500 dark:text-slate-400">
+                <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-teal-500 border-t-transparent" />
+                Loading your organisation…
+              </div>
+            )}
+
             {/* Error */}
             {error && (
               <div className="flex items-start gap-2.5 px-4 py-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700/40 text-sm text-red-700 dark:text-red-400">
@@ -141,6 +186,27 @@ export default function CreateRide() {
                 {error}
               </div>
             )}
+
+            {/* ── POST RIDE IN ── */}
+            <div>
+              <SectionLabel>Post ride in</SectionLabel>
+              <select
+                value={audience}
+                onChange={(e) => setAudience(e.target.value)}
+                disabled={profileLoading}
+                className={inputClass}
+              >
+                <option value="all">All — everyone in your organisation</option>
+                {categoryBucket && (
+                  <option value={categoryBucket}>
+                    {orgAssignedCategory.trim() || (categoryBucket === "student" ? "Student" : "Professor")} only
+                  </option>
+                )}
+              </select>
+              <p className="text-xs text-slate-400 dark:text-slate-500 mt-1.5">
+                Category-specific posts are only visible to people with the same role in your organisation.
+              </p>
+            </div>
 
             {/* ── ROUTE ── */}
             <div>
@@ -341,7 +407,7 @@ export default function CreateRide() {
             </div>
 
             {/* Submit */}
-            <button type="submit" disabled={loading || days.length === 0}
+            <button type="submit" disabled={loading || profileLoading || days.length === 0}
               className="w-full py-3 rounded-xl bg-teal-600 dark:bg-teal-500 text-white font-semibold hover:bg-teal-700 dark:hover:bg-teal-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm">
               {loading ? "Posting…" : "Post Ride"}
             </button>
