@@ -75,7 +75,7 @@ export default function CreateRide() {
 
   useEffect(() => {
     let cancelled = false;
-    fetch("http://localhost:5001/api/me", { credentials: "include" })
+    fetch(`${import.meta.env.VITE_API_URL}/api/me`||"http://localhost:5001/api/me", { credentials: "include" })
       .then(async (res) => {
         const data = await res.json();
         if (cancelled) return;
@@ -111,7 +111,7 @@ export default function CreateRide() {
 
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:5001/api/rides", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/rides`||"http://localhost:5001/api/rides", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },

@@ -39,7 +39,7 @@ function MyRideItem({ ride, onDelete }) {
     if (!confirmDelete) { setConfirmDelete(true); setTimeout(() => setConfirmDelete(false), 3000); return; }
     setDeleteLoading(true);
     try {
-      const res = await fetch(`http://localhost:5001/api/rides/${ride._id}`, { method:"DELETE", credentials:"include" });
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/rides/${ride._id}`||`http://localhost:5001/api/rides/${ride._id}`, { method:"DELETE", credentials:"include" });
       if (res.ok) { onDelete(ride._id); }
       else { const d = await res.json(); alert(d.message || "Failed to delete ride"); }
     } catch { alert("Network error."); }
@@ -124,7 +124,7 @@ export default function MyRides() {
 
   useEffect(() => {
     let cancelled = false;
-    fetch("http://localhost:5001/api/rides/mine", { credentials: "include" })
+    fetch(`${import.meta.env.VITE_API_URL}/api/rides/mine`||"http://localhost:5001/api/rides/mine", { credentials: "include" })
       .then(async (res) => {
         const data = await res.json();
         if (cancelled) return;

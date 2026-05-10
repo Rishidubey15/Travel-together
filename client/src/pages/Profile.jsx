@@ -29,7 +29,7 @@ export default function Profile() {
   const [apiError, setApiError]   = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:5001/api/me", { credentials: "include" })
+    fetch(`${import.meta.env.VITE_API_URL}/api/me`||"http://localhost:5001/api/me", { credentials: "include" })
       .then((res) => {
         if (!res.ok) throw new Error(`API error ${res.status}`);
         return res.json();

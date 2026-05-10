@@ -52,7 +52,7 @@ export default function VerifyOrganisation({ external = false }) {
     e.preventDefault();
     if (!selected) return;
     setIsSubmitting(true);
-const res = await fetch('http://localhost:5001/api/org/get-verifier', {
+const res = await fetch(`${import.meta.env.VITE_API_URL}/api/org/get-verifier`||'http://localhost:5001/api/org/get-verifier', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json', // MUST have this for Express json() middleware

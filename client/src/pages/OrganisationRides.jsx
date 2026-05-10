@@ -23,7 +23,7 @@ export default function OrganisationRides() {
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    fetch("http://localhost:5001/api/rides", { credentials: "include" })
+    fetch(`${import.meta.env.VITE_API_URL}/api/rides`||"http://localhost:5001/api/rides", { credentials: "include" })
       .then(async (res) => {
         const data = await res.json();
         if (cancelled) return;
